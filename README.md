@@ -89,9 +89,17 @@ Llama Hunt is a web application designed to streamline the job search process by
 
 ![token_counts_comparison](https://github.com/tejasram2003/LlamaHunt/assets/118297543/68432863-3676-44a4-ba28-47e2be1e69a3)
 
-<!-- ## License
+## Utilizing Intel OneAPI pytorch Acceleration
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. -->
+To utilize Intel's acceleration, we're using a library <code>intel_extension_for_pytorch</code> 
+
+```
+import intel_extension_for_pytorch as ipex
+
+optimized_tag_generator = ipex.optimize(tag_generator, dtype=torch.bfloat16)
+```
+
+<img src="" alt="comparison of inference speed with and without intel acceleration">
 
 ## Acknowledgments
 
