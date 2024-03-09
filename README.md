@@ -87,7 +87,8 @@ Llama Hunt is a web application designed to streamline the job search process by
 
 ## Intel OneAPI vs AWS Inference Speed Comparison
 
-![token_counts_comparison](https://github.com/tejasram2003/LlamaHunt/assets/118297543/9622bc1f-86d9-42d7-a39a-874068347e00)
+![image](https://github.com/tejasram2003/LlamaHunt/assets/118297543/116bb402-e630-4f21-bbcc-9f01f57f363a)
+
 
 
 ## Utilizing Intel OneAPI pytorch Acceleration
