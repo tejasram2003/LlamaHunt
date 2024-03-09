@@ -28,7 +28,8 @@ Llama Hunt is a web application designed to streamline the job search process by
 <br>
 
    ### Output:
-   <img src="https://ik.imagekit.io/tejasram/LlamaHunt/output?updatedAt=1709960288683" style="{justify-content: center; align-items: center;}" width=70%>
+   <img src="https://ik.imagekit.io/tejasram/LlamaHunt/output?updatedAt=1709971656071" style="{justify-content: center; align-items: center;}" width=70%>
+   
 ## Usage
 
 1. Clone the repository:
@@ -78,6 +79,15 @@ Llama Hunt is a web application designed to streamline the job search process by
 - Acceleration Library: Intel Acceleration Library and AutoAWQ
 - Deployment: Intel DevCloud
 
+## Advantages of Migrating to OneAPI
+
+-  Availability of High Computing Services
+-  Good Developer Support
+-  Seamless Interface
+
+## Intel OneAPI vs AWS Inference Speed Comparison
+
+![token_counts_comparison](https://github.com/tejasram2003/LlamaHunt/assets/118297543/68432863-3676-44a4-ba28-47e2be1e69a3)
 
 <!-- ## License
 
@@ -88,7 +98,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Special thanks to Intel DevCloud for providing resources for efficient scaling and performance.
 - Inspired by the need to streamline the job search process for job seekers.
 
+## Future Scopes
+
+- Using LLMs for the application process
+- Integrating larger sources for openings
+- Implementing Spam Detection
+
+
 ## Contact
 
 For any inquiries or feedback, please contact tejasram03@gmail.com
-
