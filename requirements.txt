@@ -5,3 +5,4 @@ sentence-transformers==2.2.2
 beautifulsoup4==4.12.3
 PyPDF2==3.0.1
 autoawq==0.2.3
+intel_extension_for_pytorch==2.2.0
