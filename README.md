@@ -48,28 +48,30 @@ Llama Hunt is a web application designed to streamline the job search process by
 <br>
 
     For macOS/Linux:
+   
     ```
     source <path_to_virtual_environment>/bin/activate
     ```
 
     For Windows:
+   
     ```
     <path_to_virtual_environment>\Scripts\activate
     ```
 
-4. Install dependencies:
+5. Install dependencies:
 
    ```
    pip install -r requirements.txt
    ```
 
-5. Run the Django server:
+6. Run the Django server:
 
    ```
    python manage.py runserver
    ```
 
-6. Access the application via the provided URL.
+7. Access the application via the provided URL.
 
 ## Technologies Used
 
