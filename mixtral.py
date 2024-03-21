@@ -1,6 +1,5 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer,pipeline, AutoModelForSeq2SeqLM, TextStreamer
 import torch
-# import intel_extension_for_pytorch as ipex
 import ast
 from bs4 import BeautifulSoup
 import requests
@@ -9,39 +8,69 @@ from tqdm import tqdm
 
 
 
+tag_generator_path = "TheBloke/Mistral-7B-Instruct-v0.2-AWQ"
+
+# model = AutoModelForCausalLM.from_pretrained(model_path, torch_dtype="auto").cuda()
+
+tag_generator = AutoModelForCausalLM.from_pretrained(
+    tag_generator_path,
+    low_cpu_mem_usage=True,
+    device_map="auto"
+)
+
+tokenizer = AutoTokenizer.from_pretrained(tag_generator_path)
+
+tag_streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
+
+generation_params = {
+    "do_sample": True,
+    "temperature": 0.1,
+    "top_p": 0.95,
+    "top_k": 40,
+    "max_new_tokens": 2048,
+    "repetition_penalty": 1.1
+}
+
+tag_pipe = pipeline(
+    "text-generation",
+    model=tag_generator,
+    tokenizer=tokenizer,
+    # streamer=tag_streamer,
+    **generation_params
+)
 
 
 
-# validator_path = "casperhansen/mixtral-instruct-awq"
+validator_path = "casperhansen/mixtral-instruct-awq"
 
-# # model = AutoModelForCausalLM.from_pretrained(model_path, torch_dtype="auto").cuda()
+# model = AutoModelForCausalLM.from_pretrained(model_path, torch_dtype="auto").cuda()
 
-# validator = AutoModelForCausalLM.from_pretrained(
-#     validator_path,
-#     low_cpu_mem_usage=True,
-#     device_map="auto"
-# )
+validator = AutoModelForCausalLM.from_pretrained(
+    validator_path,
+    low_cpu_mem_usage=True,
+    device_map="auto"
+)
 
-# tokenizer = AutoTokenizer.from_pretrained(validator_path)
+tokenizer = AutoTokenizer.from_pretrained(validator_path)
 
-# val_streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
+val_streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
 
-# generation_params = {
-#     "do_sample": True,
-#     "temperature": 0.7,
-#     "top_p": 0.95,
-#     "top_k": 40,
-#     "max_new_tokens": 1000,
-#     "repetition_penalty": 1.1
-# }
+generation_params = {
+    "do_sample": True,
+    "temperature": 0.7,
+    "top_p": 0.95,
+    "top_k": 40,
+    "max_new_tokens": 1000,
+    "repetition_penalty": 1.1
+}
 
-# validator_pipe = pipeline(
-#     "text-generation",
-#     model=validator,
-#     tokenizer=tokenizer,
-#     streamer=val_streamer,
-#     **generation_params
-# )
+val_pipe = pipeline(
+    "text-generation",
+    model=validator,
+    tokenizer=tokenizer,
+    streamer=val_streamer,
+    **generation_params
+)
 
 
 
@@ -58,14 +87,13 @@ def generate_tag(pipe,resume):
 
 
 
-    # print("Generating response...")
+    print("Generating response...")
     output = pipe(prompt)[0]["generated_text"]
 
     response_index = output.find("/INST]")
 
     response = output[response_index+6:]
 
-    print(response)
     return response
 
 
@@ -118,8 +146,8 @@ def get_linkedin(url):
     # Parse the HTML content
     soup = BeautifulSoup(response.content, "html.parser")
 
-    # with open("parsed_linkedin.txt","w") as file:
-    #     file.write(response.text)
+    with open("parsed_linkedin.txt","w") as file:
+        file.write(response.text)
 
     # Find all job cards
     job_cards = soup.find_all("div", class_="base-search-card__info")
@@ -131,7 +159,7 @@ def get_linkedin(url):
     for card in job_cards:
         # Find the job details
         job_title = card.find("h3", class_="base-search-card__title").text.strip()
-        # print(f"job_title: {job_title}")
+        print(f"job_title: {job_title}")
         try:
             company_name = card.find("a", class_="hidden-nested-link").text.strip()
         except:
@@ -151,10 +179,10 @@ def get_linkedin(url):
 
         # Create a dictionary to store the data for this job
         job_details = {
-            "job_title": job_title,
-            "company_name": company_name,
-            "location": location,
-            "salary_info": salary_info,
+            "Job Title": job_title,
+            "Company Name": company_name,
+            "Location": location,
+            "Salary Info": salary_info,
             "Link":apply_link
         }
 
@@ -193,15 +221,15 @@ def create_search_querries(tags:str):
 
     internshala_keywords= internshala_keywords[:-1]
 
-    # print(internshala_keywords)
+    print(internshala_keywords)
 
     internshala_search_query = f"https://internshala.com/internships/{internshala_keywords}-internship"
 
 
     jobs.append(get_internshala(internshala_search_query))
 
-    # with open("final.txt","w") as file:
-    #     file.write(str(jobs))
+    with open("final.txt","w") as file:
+        file.write(str(jobs))
         
 
     return jobs
@@ -248,77 +276,67 @@ def get_internshala(url):
 
     return all_internship_details
 
-
-def get_results(resume_content,preferences):
-
-
-    tag_generator_path = "TheBloke/Mistral-7B-Instruct-v0.2-AWQ"
-
-    # model = AutoModelForCausalLM.from_pretrained(model_path, torch_dtype="auto").cuda()
-
-    tag_generator = AutoModelForCausalLM.from_pretrained(
-        tag_generator_path,
-        low_cpu_mem_usage=True,
-        device_map="auto"
-    )
-
-    tokenizer = AutoTokenizer.from_pretrained(tag_generator_path)
-
-    tag_streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
-
-    generation_params = {
-        "do_sample": True,
-        "temperature": 0.1,
-        "top_p": 0.95,
-        "top_k": 40,
-        "max_new_tokens": 2048,
-        "repetition_penalty": 1.1
-    }
-
-    tag_pipe = pipeline(
-        "text-generation",
-        model=tag_generator,
-        tokenizer=tokenizer,
-        # streamer=tag_streamer,
-        **generation_params
-    )
-
-    while True:
-        try:
-            jobs = (create_search_querries(generate_tag(tag_pipe,resume_content)))
-            break
-        except:
-            pass
-
-    # with open('parsed_jobs.txt','w') as file:
-    #     file.write(str(jobs))
-        
-
-    # print(len(jobs))
-    # split_ratio = len(jobs)//6
-
-    # job_splits = []
-
-    # for i in range(0, len(jobs), split_ratio):
-    #     job_splits.append(jobs[i:i+split_ratio])
-
-    # print(len(job_splits))
-
-    # validated = ""
-
-    # for split in tqdm(job_splits):
-
-    #     validated += validate_jobs(pipe=tag_pipe,resume=resume_content,jobs_json=split,preferences=preferences)
-
-    # print(validated)
-
-    jobs_list = []
-
-    for i in jobs:
-        if len(i)>1:
-            for j in i:
-                jobs_list.append(j)
+with open("parsed.txt","r") as file:
+    resume_content = file.read()
 
 
-    print(jobs_list)
-    return jobs_list
+preferences = "I am not as interested in research related roles though i have done an internship priorly. I'd much rather prefer an engineering role"
+
+# with open("jobs.txt","r") as file:
+#     jobs = file.read()
+
+jobs = (create_search_querries(generate_tag(tag_pipe,resume_content)))
+
+with open('parsed_jobs.txt','w') as file:
+    file.write(str(jobs))
+    
+
+# get_naukri('something')
+
+# get_glassdoor("somethitg")
+
+with open("parsed_jobs.txt","w") as file:
+    file.write(str(jobs))
+
+print(len(jobs))
+split_ratio = len(jobs)//6
+
+# job_splits = []
+
+# for i in range(0, len(jobs), split_ratio):
+#     job_splits.append(jobs[i:i+split_ratio])
+
+# print(len(job_splits))
+
+# validated = ""
+
+# for split in tqdm(job_splits):
+
+#     validated += validate_jobs(pipe=tag_pipe,resume=resume_content,jobs_json=split,preferences=preferences)
+
+# print(validated)
+
+jobs_list = []
+
+for i in jobs:
+    if len(i)>1:
+        for j in i:
+            jobs_list.append(j)
+
+print(len(jobs_list))
+
+split_ratio = len(jobs_list)//6
+
+job_splits = []
+
+for i in range(0, len(jobs_list), split_ratio):
+    job_splits.append(jobs_list[i:i+split_ratio])
+
+
+validated = ""
+
+for split in tqdm(job_splits):
+
+    validated += validate_jobs(pipe=val_pipe,resume=resume_content,jobs_json=split,preferences=preferences)
+
+print(validated)

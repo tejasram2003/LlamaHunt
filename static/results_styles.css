@@ -203,9 +203,16 @@ body{
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat; 
+    background-attachment: fixed;
 }
 
-
+h1{
+    justify-content: center;
+    display: flex;
+    color: #fff;
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 700;
+}
 
 .josefin-sans-jobs {
     font-family: "Josefin Sans", sans-serif;
